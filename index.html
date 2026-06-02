@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="theme-color" content="#040e28"/>
+  <title>Infinity Heal — India's Healthcare Super-App</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="icon" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#040e28;font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;}
+    #splash{
+      position:fixed;inset:0;background:#040e28;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:16px;z-index:9999;transition:opacity 0.5s ease;
+    }
+    #splash.hide{opacity:0;pointer-events:none;}
+    .splash-logo{width:80px;height:80px;border-radius:20px;background:rgba(56,189,248,0.08);
+      border:2px solid rgba(56,189,248,0.3);display:flex;align-items:center;justify-content:center;font-size:44px;}
+    .splash-title{font-size:24px;font-weight:900;color:#ffd700;text-shadow:0 0 18px rgba(255,215,0,0.7);}
+    .splash-sub{font-size:12px;color:#7dd3fc;font-weight:700;letter-spacing:0.5px;text-align:center;}
+    .splash-bar{width:40px;height:4px;border-radius:2px;background:linear-gradient(90deg,#38bdf8,#00CED1);}
+    .splash-hint{font-size:11px;color:#38bdf888;margin-top:8px;}
+    #root{min-height:100vh;}
+  </style>
+</head>
+<body>
+
+<!-- Splash screen shown immediately -->
+<div id="splash">
+  <div class="splash-logo">♾️</div>
+  <div class="splash-title">Infinity Heal</div>
+  <div class="splash-sub">✨ Serving Humanity Until Infinity ✨</div>
+  <div class="splash-bar"></div>
+  <div class="splash-hint">Loading...</div>
+</div>
+
+<div id="root"></div>
+
+<!-- React + ReactDOM from CDN -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<!-- Babel standalone for JSX transformation -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script>
+  // Make React hooks available globally for the JSX file
+  const { useState, useRef, useEffect, useCallback, useMemo } = React;
+
+  // Show loading progress
+  const hint = document.querySelector('.splash-hint');
+  let dots = 0;
+  const loadingInterval = setInterval(() => {
+    dots = (dots + 1) % 4;
+    if(hint) hint.textContent = 'Loading' + '.'.repeat(dots);
+  }, 400);
+
+  function hideSplash() {
+    clearInterval(loadingInterval);
+    const splash = document.getElementById('splash');
+    if(splash){ splash.classList.add('hide'); setTimeout(()=>splash.remove(), 600); }
+  }
+</script>
+
+<!-- Load app JSX — Babel transforms it in-browser -->
+<script type="text/babel" src="app.jsx" data-presets="react" async></script>
+
+<script>
+  // After Babel loads and transforms, mount the app
+  // Poll until App is defined (Babel async transform)
+  let attempts = 0;
+  const maxAttempts = 300; // 30 seconds max
+
+  function tryMount() {
+    attempts++;
+    if(typeof App !== 'undefined') {
+      try {
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+        hideSplash();
+      } catch(e) {
+        console.error('Mount error:', e);
+        hideSplash();
+        document.getElementById('root').innerHTML =
+          '<div style="color:#ef4444;padding:20px;font-family:sans-serif;background:#040e28;min-height:100vh;">' +
+          '<h2 style="color:#ffd700">⚠️ App Error</h2><pre style="color:#94a3b8;font-size:11px;white-space:pre-wrap;">' +
+          e.message + '</pre></div>';
+      }
+    } else if(attempts < maxAttempts) {
+      setTimeout(tryMount, 100);
+    } else {
+      hideSplash();
+      document.getElementById('root').innerHTML =
+        '<div style="color:#ef4444;padding:20px;font-family:sans-serif;background:#040e28;min-height:100vh;">' +
+        '<h2 style="color:#ffd700">⚠️ Load Timeout</h2>' +
+        '<p style="color:#94a3b8">App took too long to load. Please refresh.</p></div>';
+    }
+  }
+
+  // Start trying after a short delay (let Babel start)
+  setTimeout(tryMount, 2000);
+</script>
+
+</body>
+</html>
