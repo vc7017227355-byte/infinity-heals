@@ -1,8 +1,11 @@
 {
   "name": "Infinity Heal",
   "short_name": "Infinity Heal",
-  "description": "India's Healthcare Super-App",
+  "description": "Serving Humanity Until Infinity"
   "start_url": "/",
+  "scope": "/",
+"lang": "en",
+"categories": ["health", "medical"],
   "display": "standalone",
   "background_color": "#040e28",
   "theme_color": "#040e28",
