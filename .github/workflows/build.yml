@@ -1,4 +1,3 @@
-
 name: Build TWA AAB
 on:
   workflow_dispatch:
@@ -12,7 +11,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'temurin'
 
       - name: Setup Android SDK
@@ -28,6 +27,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: infinity-heals-aab
-          path: '**/*.aab
-          
-          '
+          path: '**/*.aab'
