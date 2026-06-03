@@ -1,11 +1,11 @@
 {
-  "name": "Infinity Heal",
-  "short_name": "Infinity Heal",
-  "description": "Serving Humanity Until Infinity"
+  "name": "Infinity Heals",
+  "short_name": "Infinity Heals",
+  "description": "Serving Humanity Until Infinity",
   "start_url": "/",
   "scope": "/",
-"lang": "en",
-"categories": ["health", "medical"],
+  "lang": "en",
+  "categories": ["health", "medical"],
   "display": "standalone",
   "background_color": "#040e28",
   "theme_color": "#040e28",
