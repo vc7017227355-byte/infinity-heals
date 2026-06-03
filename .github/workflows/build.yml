@@ -1,7 +1,6 @@
+
 name: Build TWA AAB
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -19,21 +18,16 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create TWA Android Project
-        run: |
-          git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa-app
-          cd twa-app
-          sed -i 's|https://svgomg.firebaseapp.com|https://graceful-tulumba-ff85c3.netlify.app|g' app/build.gradle
-          sed -i 's|net.developeralgo.svgomg|com.infinityheals.app|g' app/build.gradle
+      - name: Build TWA APK
+        uses: FedericoBruzzone/twa-action@v1
+        with:
+          domain: graceful-tulumba-ff85c3.netlify.app
+          package-id: com.infinityheals.app
 
-      - name: Build AAB
-        run: |
-          cd twa-app
-          chmod +x gradlew
-          ./gradlew bundleRelease
-
-      - name: Upload AAB
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: infinity-heals-aab
-          path: twa-app/app/build/outputs/bundle/release/app-release.aab
+          path: '**/*.aab
+          
+          '
