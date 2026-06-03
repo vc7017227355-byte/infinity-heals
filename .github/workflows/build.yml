@@ -1,30 +1,44 @@
-name: Build TWA AAB
+name: Build Android AAB
+
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build TWA APK
-        uses: FedericoBruzzone/twa-action@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          domain: graceful-tulumba-ff85c3.netlify.app
-          package-id: com.infinityheals.app
+          node-version: '18'
 
-      - name: Upload
-        uses: actions/upload-artifact@v4
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Init Bubblewrap project
+        run: |
+          bubblewrap init \
+            --manifest https://YOUR-NETLIFY-URL/manifest.json \
+            --directory ./android-build
+        env:
+          BUBBLEWRAP_SKIP_DEPS_CHECK: true
+
+      - name: Build AAB
+        working-directory: ./android-build
+        run: bubblewrap build
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
         with:
           name: infinity-heals-aab
-          path: '**/*.aab'
+          path: ./android-build/app-release-bundle.aab
