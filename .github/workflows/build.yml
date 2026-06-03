@@ -19,44 +19,21 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Create TWA Project
+      - name: Create TWA Android Project
         run: |
-          mkdir twa-app
+          git clone https://github.com/GoogleChromeLabs/svgomg-twa.git twa-app
           cd twa-app
-          cat > build.gradle << 'EOF'
-          buildscript {
-            repositories { google(); mavenCentral() }
-            dependencies { classpath 'com.android.tools.build:gradle:8.1.0' }
-          }
-          EOF
-          cat > settings.gradle << 'EOF'
-          include ':app'
-          EOF
-
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      - name: Generate TWA
-        run: |
-          cd twa-app
-          bubblewrap init \
-            --manifest https://graceful-tulumba-ff85c3.netlify.app/manifest.json \
-            --skipPwaValidation \
-            --jdkPath $JAVA_HOME \
-            --androidSdkPath $ANDROID_SDK_ROOT
+          sed -i 's|https://svgomg.firebaseapp.com|https://graceful-tulumba-ff85c3.netlify.app|g' app/build.gradle
+          sed -i 's|net.developeralgo.svgomg|com.infinityheals.app|g' app/build.gradle
 
       - name: Build AAB
         run: |
           cd twa-app
-          bubblewrap build --skipPwaValidation
+          chmod +x gradlew
+          ./gradlew bundleRelease
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: infinity-heals-aab
-          path: twa-app/app-release-bundle.aab
+          path: twa-app/app/build/outputs/bundle/release/app-release.aab
