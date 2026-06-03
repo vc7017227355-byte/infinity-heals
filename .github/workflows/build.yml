@@ -22,9 +22,11 @@ jobs:
         run: npm install -g @bubblewrap/cli
 
       - name: Build TWA
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
         run: |
           mkdir twa && cd twa
-          bubblewrap init --manifest https://graceful-tulumba-ff85c3.netlify.app/manifest.json
+          echo "N" | bubblewrap init --manifest https://graceful-tulumba-ff85c3.netlify.app/manifest.json
           bubblewrap build --skipPwaValidation
 
       - name: Upload AAB
