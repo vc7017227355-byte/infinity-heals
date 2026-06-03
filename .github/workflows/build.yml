@@ -21,9 +21,15 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
       - name: Init TWA
-        run: yes | bubblewrap init --manifest https://graceful-tulumba-ff85c3.netlify.app/manifest.json --directory twa-app
+        run: bubblewrap init --manifest https://graceful-tulumba-ff85c3.netlify.app/manifest.json --directory twa-app
+        env:
+          CI: true
       - name: Build AAB
-        run: cd twa-app && yes | bubblewrap build
+        run: |
+          cd twa-app
+          bubblewrap build
+        env:
+          CI: true
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
