@@ -1,0 +1,32 @@
+# cloudflared-config.yml
+# Use this INSTEAD of nginx if you don't want to install/manage nginx —
+# a Cloudflare Named Tunnel can do the path-based routing itself.
+#
+# One-time setup on your Oracle VM:
+#   1. cloudflared tunnel login
+#   2. cloudflared tunnel create signalboard
+#      (this prints a tunnel ID and writes a credentials-file path — note both)
+#   3. Add a DNS route:  cloudflared tunnel route dns signalboard YOUR_SUBDOMAIN.yourdomain.com
+#   4. Save this file as ~/.cloudflared/config.yml, filling in the two
+#      placeholders below (tunnel ID + credentials-file path from step 2,
+#      and your chosen hostname from step 3).
+#   5. Run:  cloudflared tunnel run signalboard
+#      (or set it up as a systemd service so it survives reboot)
+#
+# After this, your ONE base URL for SignalBoard is:
+#   wss://YOUR_SUBDOMAIN.yourdomain.com
+# and it will resolve BOTH /relay and /angel to the right local port,
+# automatically, forever — no more copy-pasting random trycloudflare.com
+# URLs after every restart.
+
+tunnel: <TUNNEL_ID_FROM_STEP_2>
+credentials-file: /home/<your-user>/.cloudflared/<TUNNEL_ID_FROM_STEP_2>.json
+
+ingress:
+  - hostname: YOUR_SUBDOMAIN.yourdomain.com
+    path: /relay
+    service: http://localhost:8090
+  - hostname: YOUR_SUBDOMAIN.yourdomain.com
+    path: /angel
+    service: http://localhost:8766
+  - service: http_status:404

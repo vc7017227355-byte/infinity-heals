@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "9SXGyDZ7QvNexro7xxTXJ"
+uri = "file://attached_assets/SignalBoard222_updated_1786507877795.jsx"
+type = "unspecified"
+title = "SignalBoard updated JSX — 16 additional live indicators"
+description = "Standalone SignalBoard JSX with 16 additional live call/put direction indicators, WAIT safety gates, option-chain calculations, categories, and updated 175-indicator totals."
